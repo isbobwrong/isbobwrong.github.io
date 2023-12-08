@@ -114,6 +114,7 @@ function main() {
 
     let lives = 3;
     let score = 0;
+    let secretScore = 0;
     let lifeComponent;
     let scoreComponent;
     const mistakes = [];
@@ -180,9 +181,18 @@ function main() {
         }
     }
 
+    const bobCallback = () => {
+        secretScore++;
+        console.log("miam");
+
+        if(secretScore >= 5) {
+            window.location.href = '/credits.html';
+        }
+    }
+
     FetchFacts().then((values) => {
         fact = nextFact(values);
-        dragAndDropSetup(fact, values, goodAnswerCallback, penalityCallback);
+        dragAndDropSetup(fact, values, goodAnswerCallback, penalityCallback, bobCallback);
     })
     
     lifeComponent = lifeSetup();
@@ -277,7 +287,7 @@ function updateLife(lifeComp, newLife) {
  */
 function scoreSetup() {
     const scoreComp = document.createElement('div');
-    scoreComp.style = 'position: absolute; top: 2%; right: 2%;';
+    scoreComp.style = 'position: absolute; bottom: 2%; right: 2%;';
     scoreComp.innerText = 'Score: 0';
 
     document.getElementsByTagName("body")[0].appendChild(scoreComp);
@@ -301,7 +311,7 @@ function updateScore(scoreComp, newScore) {
  * @param {(fact: {*}) => void} goodAnswerCallback Function to call when you get the answer right
  * @param {(fact: {*}) => void} penalityCallback Function to call when you get the answer wrong
  */
-function dragAndDropSetup(fact, facts, goodAnswerCallback, penalityCallback) {
+function dragAndDropSetup(fact, facts, goodAnswerCallback, penalityCallback, bobCallback) {
     function dropFactCallback(e) {
         switch (e.target.id) {
             case "trueDragZone":
@@ -324,6 +334,8 @@ function dragAndDropSetup(fact, facts, goodAnswerCallback, penalityCallback) {
     document.getElementById("trueDragZone").addEventListener('dragover', dragCancel);
     document.getElementById("falseDragZone").addEventListener('drop', dropFactCallback);
     document.getElementById("falseDragZone").addEventListener('dragover', dragCancel);
+    document.getElementById("bob").addEventListener('drop', bobCallback);
+    document.getElementById("bob").addEventListener('dragover', dragCancel);
 }
 
 function dragCancel(e) {
