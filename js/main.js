@@ -42,8 +42,9 @@ const bubbleFactory = (bubbleParent) => {
 /**
  * Creates a closable popup that displays gamestats and suggests to replay
  * @param {number} finalScore finalScore to display on the popup
+ * @param {*} mistakes array of mistakes that leaded to losing the game
  */
-const popUpGameOverFactory = (finalScore) => {
+const popUpGameOverFactory = (finalScore, mistakes) => {
     const background = document.createElement("div");
     background.classList.add("popup_background");
 
@@ -64,7 +65,23 @@ const popUpGameOverFactory = (finalScore) => {
     </h1>
     <p>
         You got a score of ${finalScore}, well done !
+        <br/>
+        You were wrong on those facts:
     </p>`;
+
+    mistakes.forEach(mistake => {
+        popup.innerHTML +=
+        `<h2>
+            ${mistake.text}
+        </h2>
+        <p>
+            This fact was ${mistake.isTrue} and this proves it:
+            <br/>
+            ${mistake.explaination}
+            <br/>
+            Here is the repartition of people answers: True ${mistake.trueProportion}% / False ${mistake.falseProportion}%
+        </p>`;
+    });
 
     const buttonPlayAgain = document.createElement('button');
     buttonPlayAgain.onclick = closePopup;
@@ -99,26 +116,33 @@ function main() {
     let score = 0;
     let lifeComponent;
     let scoreComponent;
+    const mistakes = [];
 
     let fact;
 
     const noLivesRemainingCallback = () => {
         // defeat
-        popUpGameOverFactory(score);
+        popUpGameOverFactory(score, mistakes);
         resetDragZones();
         lives = 3;
         updateLife(lifeComponent, lives);
         score = 0;
         updateScore(scoreComponent, score);
+        
+        while(mistakes.length>0) {
+            mistakes.pop();
+        }
 
         FetchFacts().then((values) => {
             fact = nextFact(values);
         })
     }
 
-    const goodAnswerCallback = () => {
+    const goodAnswerCallback = (fact) => {
         score++;
         updateScore(scoreComponent, score);
+
+        PostAnswerOnFact(fact.id, fact.isTrue).then(() => {}).catch((err) => console.log(err));
 
         if(easterEgg2Ready || hardModeFound) {
             easteregg2.play();
@@ -146,9 +170,11 @@ function main() {
         }
     }
 
-    const penalityCallback = () => {
+    const penalityCallback = (fact) => {
         lives--;
         updateLife(lifeComponent, lives);
+        mistakes.push(fact);
+        PostAnswerOnFact(fact.id, !fact.isTrue).then(() => {}).catch((err) => console.log(err));
         if(lives <= 0) {
             noLivesRemainingCallback();
         }
@@ -185,12 +211,12 @@ function nextFact(factList) {
  * Adds answer to container if correct.
  * @param {{message: string, isTrue: boolean}} fact fact we are checking right now
  * @param {boolean} boolean answer you are giving
- * @param {() => void} goodAnswerCallback Function to call when you get the answer right
- * @param {() => void} penalityCallback Function to call when you get the answer wrong
+ * @param {(fact: {*}) => void} goodAnswerCallback Function to call when you get the answer right
+ * @param {(fact: {*}) => void} penalityCallback Function to call when you get the answer wrong
  */
 function addAnswer(fact, boolean, goodAnswerCallback, penalityCallback) {
     if(fact.isTrue != boolean) {
-        penalityCallback();
+        penalityCallback(fact);
         return;
     }
 
@@ -203,7 +229,7 @@ function addAnswer(fact, boolean, goodAnswerCallback, penalityCallback) {
     }
 
     bubbleFactory(document.getElementById(componentName));
-    goodAnswerCallback();
+    goodAnswerCallback(fact);
 }
 
 /**
@@ -272,8 +298,8 @@ function updateScore(scoreComp, newScore) {
  * setuping listeners for drag and drop of the fact
  * @param {*} fact The fact we will drag
  * @param {*} facts The fact list from API
- * @param {() => void} goodAnswerCallback Function to call when you get the answer right
- * @param {() => void} penalityCallback Function to call when you get the answer wrong
+ * @param {(fact: {*}) => void} goodAnswerCallback Function to call when you get the answer right
+ * @param {(fact: {*}) => void} penalityCallback Function to call when you get the answer wrong
  */
 function dragAndDropSetup(fact, facts, goodAnswerCallback, penalityCallback) {
     function dropFactCallback(e) {
