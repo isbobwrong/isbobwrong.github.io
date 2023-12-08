@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewbox="0 0 2 3" >
+    <rect x="20" y="10" width="80%" height="80%" fill="#151515" />
+
+  
+<!-- Draw diagonal lines -->
+<rect x="-100" y="-30" width="200" height="10" fill="#a6a6a6" transform="rotate(-45 90 0)" />
+<rect x="-50" y="-10" width="200" height="10" fill="#a6a6a6" transform="rotate( -45 90 0)" />
+<rect x="-50" y="10" width="300" height="10" fill="#a6a6a6" transform="rotate(-45 90 0)" />
+<rect x="-50" y="30" width="300" height="10" fill="#a6a6a6" transform="rotate(-45 90 0)" />
+<rect x="-50" y="50" width="300" height="10" fill="#a6a6a6" transform="rotate(-45 90 0)" />
+<rect x="-50" y="70" width="300" height="10" fill="#a6a6a6" transform="rotate(-45 90 0)" />
+<rect x="-50" y="90" width="300" height="10" fill="#a6a6a6" transform="rotate(-45 90 0)" />
+<rect x="-50" y="110" width="300" height="10" fill="#a6a6a6" transform="rotate(-45 90 0)" />
+<!-- <path d="m20 60 0 5 110 -55 -10 0 Z" fill="#ca2525"/>
+  <path d="m20 90 10 0 150 -75 0 -5 Z" fill="#ca2525"/>
+  <path d="m80 90 10 0 90 -50 0 -5 Z" fill="#ca2525"/>
+  <path d="m140 90 10 0 30 -15 0 -5" fill="#ca2525"/>  -->
+
+  <path d="m0 0 200 0 0 100 -200 0 0 -100
+   20 0 0 90 160 0 0 -80 -160 0 Z" fill="#474747" />
+
+</svg>

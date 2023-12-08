@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg>
+<svg width="400px" height="180px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <path d="M200 180m -20 -10 -160 0 q-20 0 -20 -120v-30q0 -20 20 -20 h340 q20 0 20 20v 130 q0 20 -20 20 z"></path>
+  <path d="M 200 160h-170q-15 0 -15 -15 v -120 q0 -15 15 -15 h 320q15 0 15 15v120q0 15 -15 15 " fill="#ffffff"></path>
+  <path d="M200 200 m -40 -31 80 0 -40 31 " fill="black"/>
+  <path d="M200 190 m-40 -31 80 0 -40 31 " fill="white"
+   />
+</svg>
+  
+  

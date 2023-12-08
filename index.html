@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Is Bob Wrong ?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+    <link rel="stylesheet" href="./css/gameStyles.css">
+    <link rel="stylesheet" href="./css/hardStyles.css">
+</head>
+<body>
+    <div id="mainContainer">
+        <div id="gameFrame">
+
+
+            <div id="trueFrame">
+                <p>Vrai</p>
+                <div id="trueContainer">
+                    <svg  width="100%" height="100%", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <image xlink:href="svgDrawings/truthBox.svg" x="0" y="0" width="100%"  height="100%"/>
+                    </svg>
+                </div>
+                
+            </div>
+
+            <div id="bobFrame">
+                <div id="bobFactContainer">
+
+                    <svg id="Bubble" width="100%" height="100%", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <image xlink:href="svgDrawings/Bubble.svg" x="0" y="0" width="100%"  height="100%"/>
+                    </svg> 
+                    <div id="bobFact" draggable="true"></div>
+                </div>
+                <div id="bob">
+                    <svg id="bob" width="100%" height="100%", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <image xlink:href="svgDrawings/Bob1.svg" x="0" y="0" width="100%"  height="100%"/>
+                    </svg>
+                    <div id="left-eye" class="bobEye" >
+                        <div  class="eyeBall"></div>
+                    </div>
+                    <div id="right-eye" class="bobEye" >
+                        <div  class="eyeBall"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="falseFrame">
+                <p>Faux</p>
+                <div id="falseContainer">
+                    <svg  width="100%" height="100%", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <image xlink:href="svgDrawings/falseBox.svg" x="0" y="0" width="100%"  height="100%"/>
+                    </svg>
+                </div>
+            </div>
+        </canvas>
+        <script src="js/hardmode.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/eyes.js"></script>
+    </div>
+    
+</body>
+</html>

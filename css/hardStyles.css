@@ -1,0 +1,103 @@
+.hardTrue {
+    animation: hardmovementTrue 6s cubic-bezier(1,.33,.27,1.55) infinite;
+}
+
+@keyframes hardmovementTrue {
+    0% {
+        filter: hue-rotate(90deg);
+		transform: translate(0px, 0px);
+	}
+    20% {
+        filter: hue-rotate(306deg);
+		transform: translate(-10px, 60px);
+	}
+	40% {
+        filter: hue-rotate(181deg);
+		transform: translate(150px, 900);
+	}
+    65% {
+        filter: hue-rotate(70deg);
+		transform: translate(860px, 200px);
+	}
+	100% {
+        filter: hue-rotate(90deg);
+		transform: translate(0px, 0px);
+	}
+}
+
+.hardFalse {
+    animation: hardmovementFalse 8s ease-in infinite;
+}
+
+@keyframes hardmovementFalse {
+    0% {
+        filter: hue-rotate(0deg);
+		transform: translate(0px, 0px);
+	}
+    30% {
+        bfilter: hue-rotate(900deg);
+		transform: translate(105px, 200px);
+	}
+	47% {
+        filter: hue-rotate(789deg);
+		transform: translate(-900px, 50px);
+	}
+    55% {
+        filter: hue-rotate(321deg);
+		transform: translate(50%, -10%);
+	}
+	100% {
+        filter: hue-rotate(0deg);
+		transform: translate(0px, 0px);
+	}
+}
+
+.hardBody {
+    animation: hardcolorBody 8s linear infinite;
+}
+
+@keyframes hardcolorBody {
+    0% {
+        background-color: salmon;
+	}
+    33% {
+        background-color: aquamarine;
+	}
+    67% {
+        background-color:chocolate;
+	}
+    100% {
+        background-color: salmon;
+	}
+}
+
+.hardFact {
+    animation: hardmovementFact 11s ease-out infinite;
+}
+
+@keyframes hardmovementFact {
+    0% {
+        filter: hue-rotate(0deg);
+		transform: translate(0px, 0px);
+	}
+    15% {
+        bfilter: hue-rotate(900deg);
+		transform: translate(19%, 30%);
+	}
+	66% {
+        filter: hue-rotate(789deg);
+		transform: translate(-9%, 50px);
+	}
+    77% {
+        filter: hue-rotate(321deg);
+		transform: translate(50%, -10%);
+	}
+    88% {
+        filter: hue-rotate(321deg);
+		transform: translate(-31%, 10%);
+	}
+	100% {
+        filter: hue-rotate(0deg);
+		transform: translate(0px, 0px);
+	}
+}
