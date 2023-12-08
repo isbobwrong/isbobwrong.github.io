@@ -2,10 +2,6 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-const facts = [
-    {text: "toto est gros", isTrue: true}, {text: "toto est mince", isTrue: false}, {text: "toto est raciste", isTrue: true}, {text: "toto est petit", isTrue: true}, {text: "toto est tolérent", isTrue: false}, {text: "toto est intolérent au lactose", isTrue: true}
-];
-
 const konamiPattern = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 var current = 0;
 
@@ -34,10 +30,13 @@ const keyHandler = function (event) {
  * @param {HTMLElement} bubbleParent Parent element for our new bubble
  */
 const bubbleFactory = (bubbleParent) => {
-    const bubble = document.createElement("div");
-    bubble.innerText = "correct";
-    bubble.style = 'pointer-events: none; user-select: none';
+
+    const bubble = document.createElement('img');
+    bubble.src = './svgDrawings/miniBubble.svg';
+    bubble.style = 'width: 20%; height: 20%; pointer-events: none; user-select: none';
+
     bubbleParent.appendChild(bubble);
+    console.log(bubbleParent)
 }
 
 /**
@@ -89,27 +88,62 @@ function getRandomFact(factTab) {
 function main() {
     document.addEventListener('keydown', keyHandler, false);
 
+    const easteregg2 = new Audio('./src/easter_egg2_sound.mp3');
+    let easterEgg2Ready = false;
+
+    setTimeout(function() {
+        easterEgg2Ready = true;
+    }, 3600000);
+
     let lives = 3;
-    let fact = nextFact();
+    let score = 0;
     let lifeComponent;
     let scoreComponent;
-    let score = 0;
+
+    let fact;
 
     const noLivesRemainingCallback = () => {
         // defeat
         popUpGameOverFactory(score);
-        resetContainers();
+        resetDragZones();
         lives = 3;
         updateLife(lifeComponent, lives);
         score = 0;
         updateScore(scoreComponent, score);
 
-        startGame();
+        FetchFacts().then((values) => {
+            fact = nextFact(values);
+        })
     }
 
     const goodAnswerCallback = () => {
         score++;
         updateScore(scoreComponent, score);
+
+        if(easterEgg2Ready || hardModeFound) {
+            easteregg2.play();
+            easterEgg2Ready = false;
+        }
+        if(score == 10) {
+            // 10 points easter egg
+            const audio = new Audio('./src/easter_egg1_sound.mp3');
+            audio.play();
+        } else if(score == 69) {
+            // 69 points easter egg
+            const sinjos = document.createElement('img');
+            sinjos.src = './svgDrawings/monkey.svg';
+            sinjos.style = 'width: 50%; height: 50%; position: absolute; top: 0; left: 0';
+            sinjos.classList.add('across_the_screen');
+            sinjos.onclick = () => {
+                lives++;
+            }
+
+            document.getElementsByTagName("body")[0].appendChild(sinjos);
+
+            setTimeout(function() {
+                sinjos.remove();
+            }, 2000);
+        }
     }
 
     const penalityCallback = () => {
@@ -120,27 +154,28 @@ function main() {
         }
     }
 
-    dragAndDropSetup(fact, goodAnswerCallback, penalityCallback);
-
+    FetchFacts().then((values) => {
+        fact = nextFact(values);
+        dragAndDropSetup(fact, values, goodAnswerCallback, penalityCallback);
+    })
+    
     lifeComponent = lifeSetup();
     scoreComponent = scoreSetup();
-
+    
     startGame();
 }
 
-/**
- * Function that is called at the start of every game
- */
 function startGame() {
     // Nothing for now
 }
 
 /**
+ * @param {*} factList List of facts from API
  * @returns {{message: string, isTrue: boolean}} gives the next fact
  */
-function nextFact() {
+function nextFact(factList) {
     const bobFact = document.getElementById("bobFact");
-    const fact = getRandomFact(facts);
+    const fact = getRandomFact(factList);
     bobFact.innerText = fact.text;
 
     return fact;
@@ -162,9 +197,9 @@ function addAnswer(fact, boolean, goodAnswerCallback, penalityCallback) {
     let componentName;
 
     if(boolean) {
-        componentName = "trueContainer";
+        componentName = "trueDragZone";
     } else {
-        componentName = "falseContainer";
+        componentName = "falseDragZone";
     }
 
     bubbleFactory(document.getElementById(componentName));
@@ -177,10 +212,10 @@ function addAnswer(fact, boolean, goodAnswerCallback, penalityCallback) {
  */
 function lifeSetup() {
     const lifeComp = document.createElement('div');
-    lifeComp.style = 'color: white';
-    lifeComp.innerText = 'Lifes : 3';
+    lifeComp.style = 'top: 0; user-select: none';
+    lifeComp.innerText = '❤️❤️❤️';
 
-    document.getElementById("bob").appendChild(lifeComp);
+    document.getElementById("bobContainer").appendChild(lifeComp);
     
     return lifeComp;
 }
@@ -191,7 +226,23 @@ function lifeSetup() {
  * @param {number} newLife new number of lives
  */
 function updateLife(lifeComp, newLife) {
-    lifeComp.innerText = 'Lifes : ' + newLife;
+    switch (newLife) {
+        case 3:
+            lifeComp.innerText = '❤️❤️❤️';
+        break;
+
+        case 2:
+            lifeComp.innerText = '❤️❤️';
+        break;
+
+        case 1:
+            lifeComp.innerText = '❤️';
+        break;
+    
+        default:
+            lifeComp.innerText = '';
+        break;
+    }
 }
 
 /**
@@ -219,21 +270,22 @@ function updateScore(scoreComp, newScore) {
 
 /**
  * setuping listeners for drag and drop of the fact
- * @param {{message: string, isTrue: boolean}} fact The fact we will drag
+ * @param {*} fact The fact we will drag
+ * @param {*} facts The fact list from API
  * @param {() => void} goodAnswerCallback Function to call when you get the answer right
  * @param {() => void} penalityCallback Function to call when you get the answer wrong
  */
-function dragAndDropSetup(fact, goodAnswerCallback, penalityCallback) {
+function dragAndDropSetup(fact, facts, goodAnswerCallback, penalityCallback) {
     function dropFactCallback(e) {
         switch (e.target.id) {
-            case "trueContainer":
+            case "trueDragZone":
                 addAnswer(fact, true, goodAnswerCallback, penalityCallback);
-                fact = nextFact();
+                fact = nextFact(facts);
                 break;
     
-            case "falseContainer":
+            case "falseDragZone":
                 addAnswer(fact, false, goodAnswerCallback, penalityCallback);
-                fact = nextFact();
+                fact = nextFact(facts);
                 break;
         
             default:
@@ -242,19 +294,19 @@ function dragAndDropSetup(fact, goodAnswerCallback, penalityCallback) {
         }
     }
 
-    document.getElementById("trueContainer").addEventListener('drop', dropFactCallback);
-    document.getElementById("trueContainer").addEventListener('dragover', dragCancel);
-    document.getElementById("falseContainer").addEventListener('drop', dropFactCallback);
-    document.getElementById("falseContainer").addEventListener('dragover', dragCancel);
+    document.getElementById("trueDragZone").addEventListener('drop', dropFactCallback);
+    document.getElementById("trueDragZone").addEventListener('dragover', dragCancel);
+    document.getElementById("falseDragZone").addEventListener('drop', dropFactCallback);
+    document.getElementById("falseDragZone").addEventListener('dragover', dragCancel);
 }
 
 function dragCancel(e) {
     e.preventDefault();
 }
 
-function resetContainers() {
-    document.getElementById("trueContainer").innerHTML = '';
-    document.getElementById("falseContainer").innerHTML = '';
+function resetDragZones() {
+    document.getElementById("trueDragZone").innerHTML = '';
+    document.getElementById("falseDragZone").innerHTML = '';
 }
 
 main();
